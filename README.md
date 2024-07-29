@@ -2,7 +2,7 @@
 
 This is the repository of RS2C: Multimodal Knowledge Graph Completion with Relation Semantics and Cross-modal Consistency
 
-![image](ERS.png)
+![image](RS2C.png)
 
 ### Requirements:
 ```shell
