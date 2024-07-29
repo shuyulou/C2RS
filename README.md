@@ -1,6 +1,6 @@
-## Encoding Relations Semantically: A New Multimodal Knowledge Graph Completion Model with Contrastive Learning
+## RS2C: Multimodal Knowledge Graph Completion with Relation Semantics and Cross-modal Consistency
 
-This is the repository of Encoding Relations Semantically: A New Multimodal Knowledge Graph Completion Model with Contrastive Learning
+This is the repository of RS2C: Multimodal Knowledge Graph Completion with Relation Semantics and Cross-modal Consistency
 
 ![image](ERS.png)
 
