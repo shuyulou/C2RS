@@ -1,5 +1,5 @@
 from dataset import VTKG
-from model_C2RS import C2RS
+from model_c2rs import C2RS
 from tqdm import tqdm
 from utils import calculate_rank, metrics, build_kg
 import numpy as np
