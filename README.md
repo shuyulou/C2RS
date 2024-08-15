@@ -1,6 +1,6 @@
 ## C2RS: Multimodal Knowledge Graph Completion with Cross-Modal Consistency and Relation Semantics
 
-This is the repository of C<sup>2</sup>RS: Multimodal Knowledge Graph Completion with Cross-Modal Consistency and Relation Semantics
+This is the repository of C2RS: Multimodal Knowledge Graph Completion with Cross-Modal Consistency and Relation Semantics
 
 ![image](C2RS.png)
 
