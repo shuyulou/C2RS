@@ -1,8 +1,8 @@
-## RS2C: Multimodal Knowledge Graph Completion with Relation Semantics and Cross-modal Consistency
+## C^2RS: Multimodal Knowledge Graph Completion with Cross-Modal Consistency and Relation Semantics
 
 This is the repository of RS2C: Multimodal Knowledge Graph Completion with Relation Semantics and Cross-modal Consistency
 
-![image](RS2C.png)
+![image](C2RS.png)
 
 ### Requirements:
 ```shell
