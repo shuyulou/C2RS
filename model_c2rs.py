@@ -5,7 +5,7 @@ import torch.nn.functional as F
 
 from model_new import *
 
-class RS2C(nn.Module):
+class C2RS(nn.Module):
     def __init__(
             self, 
             num_ent, 
@@ -27,7 +27,7 @@ class RS2C(nn.Module):
             score_function = "tucker",
             dataset = "MKG-W"
         ):
-        super(RS2C, self).__init__()
+        super(C2RS, self).__init__()
         self.dim_str = dim_str
         self.num_head = num_head
         self.dim_hid = dim_hid
