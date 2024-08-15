@@ -1,5 +1,5 @@
 from dataset import VTKG
-from model_RS2C import RS2C
+from model_C2RS import C2RS
 from tqdm import tqdm
 from utils import calculate_rank, metrics, build_kg
 import numpy as np
@@ -38,7 +38,7 @@ if __name__ == "__main__":
     parser.add_argument('--dim', default=200, type=int)
     parser.add_argument('--num_epoch', default=100, type=int)
     parser.add_argument('--valid_epoch', default=50, type=int)
-    parser.add_argument('--exp', default='RS2C')
+    parser.add_argument('--exp', default='C2RS')
     parser.add_argument('--no_write', action='store_true')
     parser.add_argument('--num_layer_enc_ent', default=1, type=int)
     parser.add_argument('--num_layer_enc_rel', default=1, type=int)
@@ -97,7 +97,7 @@ if __name__ == "__main__":
     text_token_index = text_token_index.cuda()
     logger.info(visual_token_index, text_token_index)
     logger.info(visual_key_mask, text_key_mask)
-    model = RS2C(
+    model = C2RS(
         num_ent = KG.num_ent, 
         num_rel = KG.num_rel,
         ent_vis_mask = visual_key_mask,
@@ -118,7 +118,7 @@ if __name__ == "__main__":
         dataset = args.data
     ).cuda()
     loss_fn = nn.CrossEntropyLoss(label_smoothing = args.smoothing)
-    optimizer = torch.optim.Adam(model.parametRS2C(), lr = args.lr, weight_decay = args.decay)
+    optimizer = torch.optim.Adam(model.parametC2RS(), lr = args.lr, weight_decay = args.decay)
     scheduler = torch.optim.lr_scheduler.CosineAnnealingWarmRestarts(optimizer, args.step_size, T_mult = 2)
 
     last_epoch = 0
@@ -161,7 +161,7 @@ if __name__ == "__main__":
             total_loss += loss.item()         
             optimizer.zero_grad()
             loss.backward()
-            torch.nn.utils.clip_grad_norm_(model.parametRS2C(), 0.1)
+            torch.nn.utils.clip_grad_norm_(model.parametC2RS(), 0.1)
             optimizer.step()
         scheduler.step()
         logger.info(f"{epoch} \t {total_loss:.6f} \t {tloss_b:.6f} \t {time.time() - start:.6f} s")
