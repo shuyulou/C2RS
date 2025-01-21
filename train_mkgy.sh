@@ -1,10 +1,10 @@
-data=MKG-W
+data=MKG-Y
 num_epoch=5000
 hidden_dim=1024
 lr=5e-4
 dim=128
 max_vis_token=8
-max_txt_token=24
+max_txt_token=25
 num_layer_dec=2
 cuda_device=4
 
