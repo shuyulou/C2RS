@@ -5,10 +5,6 @@ lr=5e-4
 dim=128
 max_vis_token=8
 max_txt_token=24
-num_head=8
-emb_dropout=0.9
-vis_dropout=0.9
-emb_dropout=0.9
 num_layer_dec=2
 cuda_device=4
 
