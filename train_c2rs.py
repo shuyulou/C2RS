@@ -43,7 +43,7 @@ if __name__ == "__main__":
     parser.add_argument('--num_layer_enc_ent', default=1, type=int)
     parser.add_argument('--num_layer_enc_rel', default=1, type=int)
     parser.add_argument('--num_layer_dec', default=2, type=int)
-    parser.add_argument('--num_head', default=2, type=int)
+    parser.add_argument('--num_head', default=8, type=int)
     parser.add_argument('--hidden_dim', default=256, type = int)
     parser.add_argument('--dropout', default=0.01, type = float)
     parser.add_argument('--emb_dropout', default=0.9, type = float)
