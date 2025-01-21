@@ -35,8 +35,8 @@ class C2RS(nn.Module):
         self.num_rel = num_rel
 
         visual_tokens = torch.load("tokens/visual.pth")
-        textual_tokens = torch.load("tokens/textual.pth")
-        structure_tokens = torch.load("tokens/{}-gat_node2vec.pth".format(dataset))
+        textual_tokens = torch.load("tokens/{}-textual.pth".format(dataset))
+        structure_tokens = torch.load("tokens/{}-node2vec.pth".format(dataset))
         self.visual_token_index = visual_token_index
         self.visual_token_embedding = nn.Embedding.from_pretrained(visual_tokens).requires_grad_(False)
         self.text_token_index = text_token_index
@@ -79,8 +79,9 @@ class C2RS(nn.Module):
         self.pos_rel = nn.Parameter(torch.Tensor(1,1,dim_str))
         self.pos_tail = nn.Parameter(torch.Tensor(1,1,dim_str))
         
-        self.proj_ent_vis = nn.Linear(32, dim_str)
-        self.proj_ent_txt = nn.Linear(768, dim_str)
+        self.proj_ent_vis = nn.Linear(visual_tokens.size(1), dim_str)
+        self.proj_ent_txt = nn.Linear(textual_tokens.size(1), dim_str)
+        self.proj_s = nn.Linear(structure_tokens.size(1), dim_str)
 
         ent_encoder_layer = nn.TransformerEncoderLayer(dim_str, num_head, dim_hid, dropout, batch_first = True)
         self.ent_encoder = nn.TransformerEncoder(ent_encoder_layer, num_layer_enc_ent)
@@ -97,8 +98,6 @@ class C2RS(nn.Module):
             pass
         
         self.init_weights()
-        torch.save(self.visual_token_embedding, open("visual_token.pth", "wb"))
-        torch.save(self.text_token_embedding, open("textual_token.pth", "wb"))
 
         self.register_buffer('head_valid', torch.zeros(self.num_ent, self.num_rel, dtype=torch.bool))
         self.register_buffer('tail_valid', torch.zeros(self.num_ent, self.num_rel, dtype=torch.bool))
@@ -169,45 +168,12 @@ class C2RS(nn.Module):
         targets_itc = torch.arange(0, self.num_ent).to(ent_t.device)
         temp = 0.5
         sim_itc_tv = ent_v @ ent_t.t() / temp
+        sim_itc_vt = ent_t @ ent_v.t() / temp
         itc_tv_loss = F.cross_entropy(sim_itc_tv, targets_itc)
+        itc_vt_loss = F.cross_entropy(sim_itc_vt, targets_itc)
+        itc_loss = 0.5 * ( itc_tv_loss + itc_vt_loss )
 
-        return torch.cat([ent_embs[:,0], self.lp_token], dim = 0), rep_rel_str.squeeze(dim=1), itc_tv_loss
-
-    def itc_loss(self, emb_ent1):
-        ent_tkn = self.ent_token.tile(self.num_ent, 1, 1)
-        rep_ent_str = self.embdr(self.str_ent_ln(self.ent_embeddings)) + self.pos_str_ent
-        entity_visual_tokens = self.visual_token_embedding(self.visual_token_index)
-        rep_ent_vis = self.visdr(self.vis_ln(self.proj_ent_vis(entity_visual_tokens))) + self.pos_vis_ent
-        entity_text_tokens = self.text_token_embedding(self.text_token_index)
-        rep_ent_txt = self.txtdr(self.txt_ln(self.proj_ent_txt(entity_text_tokens))) + self.pos_txt_ent
-        ent_seq = torch.cat([ent_tkn, rep_ent_str, rep_ent_vis, rep_ent_txt], dim = 1)
-        
-        # ent_embs: [ent_num, seq_len, embed_dim]
-        ent_embs = self.ent_encoder(ent_seq, src_key_padding_mask = self.ent_mask)
-        ent_a = ent_embs[:,0]
-        # ent_a = torch.mean(ent_embs, dim=1)
-        ent_s = ent_embs[:,1]
-        ent_t = torch.mean(ent_embs[:, 2: 2 + self.num_vis, :], dim=1)
-        ent_v = torch.mean(ent_embs[:, 2 + self.num_vis: , :], dim=1)
-        select_ents = emb_ent1[:-1]
-        # print(ent_a.size())
-        # print(ent_t.size())
-        # print(ent_v.size())
-
-        targets_itc = torch.arange(0, self.num_ent).to(emb_ent1.device)
-        temp = 0.5
-        sim_itc_at = ent_a @ ent_t.t() / temp
-        sim_itc_av = ent_a @ ent_v.t() / temp
-        sim_itc_tv = ent_t @ ent_v.t() / temp
-        # print(ent_v.size())
-        # print(ent_t.size())
-        # print(sim_itc_at)
-        # print(targets_itc)
-        itc_at_loss = F.cross_entropy(sim_itc_at, targets_itc)
-        itc_av_loss = F.cross_entropy(sim_itc_av, targets_itc)
-        itc_tv_loss = F.cross_entropy(sim_itc_tv, targets_itc)
-        itc_loss = itc_at_loss + itc_av_loss + itc_tv_loss
-        return itc_tv_loss
+        return torch.cat([ent_embs[:,0], self.lp_token], dim = 0), rep_rel_str.squeeze(dim=1), itc_loss
     
     def contrastive_loss_relation(self, rel_embs, loss_flag = True):
         head_scores = self.head_classifier_r(rel_embs)
@@ -220,7 +186,7 @@ class C2RS(nn.Module):
         if loss_flag:
             head_loss = self.bceloss(head_scores, self.head_valid.T.float())
             tail_loss = self.bceloss(tail_scores, self.tail_valid.T.float())
-            return head_loss + tail_loss
+            return 0.5 * (head_loss + tail_loss)
         else:
             return
     
