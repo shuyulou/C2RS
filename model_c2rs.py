@@ -1,9 +1,7 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-
-
-from model_new import *
+from model_tool import *
 
 class C2RS(nn.Module):
     def __init__(
