@@ -17,6 +17,7 @@ node2vec==0.4.6
 ### Download:
 
 DB15K and MKG-W: https://github.com/quqxui/MMRNS
+textual tokens, visual tokens, node2vec tokens and deepwalk tokens：https://pan.baidu.com/s/1dY0HZKc5TQu1KhOGeECt4Q?pwd=hrp7 
 
 ### Multimodal Knowledge Graph Completion:
 
