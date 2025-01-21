@@ -1,11 +1,18 @@
 data=MKG-W
-num_epoch=2000
+num_epoch=5000
 hidden_dim=1024
 lr=5e-4
-dim=256
+dim=128
+max_vis_token=8
+max_txt_token=24
+num_head=8
+emb_dropout=0.9
+vis_dropout=0.9
+emb_dropout=0.9
 num_layer_dec=2
 cuda_device=4
 
 CUDA_VISIBLE_DEVICES=${cuda_device} python train_rs2c.py --data ${data} --num_epoch ${num_epoch}\
                                                         --hidden_dim ${hidden_dim} --lr ${lr}\
-                                                        --dim ${dim} --num_layer_dec ${num_layer_dec} 
+                                                        --dim ${dim} --max_txt_token ${max_txt_token}\
+                                                        --num_layer_dec ${num_layer_dec} 
