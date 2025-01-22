@@ -47,9 +47,6 @@ class C2RS(nn.Module):
         false_ents = torch.full((self.num_ent,1),False).cuda()
         self.ent_mask = torch.cat([false_ents, false_ents, ent_vis_mask, ent_txt_mask], dim = 1)
         
-        false_rels = torch.full((self.num_rel,1),False).cuda()
-        self.rel_mask = torch.cat([false_rels, false_rels], dim = 1)
-        
         self.ent_token = nn.Parameter(torch.Tensor(1, 1, dim_str))
         self.rel_token = nn.Parameter(torch.Tensor(1, 1, dim_str))
         self.ent_embeddings = structure_tokens.requires_grad_(False).unsqueeze(1)
@@ -99,7 +96,6 @@ class C2RS(nn.Module):
 
         self.register_buffer('head_valid', torch.zeros(self.num_ent, self.num_rel, dtype=torch.bool))
         self.register_buffer('tail_valid', torch.zeros(self.num_ent, self.num_rel, dtype=torch.bool))
-        self.classifier = nn.Linear(dim_str, self.num_rel)
         
         self.bceloss = nn.BCEWithLogitsLoss()
 
