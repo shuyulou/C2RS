@@ -149,7 +149,7 @@ class C2RS(nn.Module):
 
     def forward(self):
         ent_tkn = self.ent_token.tile(self.num_ent, 1, 1)
-        rep_ent_str = self.embdr(self.str_ent_ln(self.ent_embeddings)) + self.pos_str_ent
+        rep_ent_str = self.embdr(self.str_ent_ln(self.proj_s(self.ent_embeddings))) + self.pos_str_ent
         
         entity_visual_tokens = self.visual_token_embedding(self.visual_token_index)
         rep_ent_vis = self.visdr(self.vis_ln(self.proj_ent_vis(entity_visual_tokens))) + self.pos_vis_ent
@@ -189,14 +189,6 @@ class C2RS(nn.Module):
             return
     
     def score(self, emb_ent, emb_rel, triplets):
-        # args:
-        #   emb_ent: [num_ent, emb_dim]
-        #   emb_rel: [num_rel, emb_dim]
-        #   triples: [batch_size, 3]
-        # return:
-        #   scores: [batch_size, num_ent]
-        # print("triplets:")
-        # print([triplets[:,0] - self.num_rel, triplets[:,1] - self.num_ent, triplets[:,2] - self.num_rel])
         h_seq = emb_ent[triplets[:,0] - self.num_rel].unsqueeze(dim = 1) + self.pos_head
         r_seq = emb_rel[triplets[:,1] - self.num_ent].unsqueeze(dim = 1) + self.pos_rel
         t_seq = emb_ent[triplets[:,2] - self.num_rel].unsqueeze(dim = 1) + self.pos_tail
