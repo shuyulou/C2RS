@@ -33,3 +33,9 @@ train on MKG-W
 ```shell
 sh train_mkgw.sh 
 ```
+
+train on MKG-Y
+
+```shell
+sh train_mkgy.sh 
+```
